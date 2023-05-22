@@ -41,17 +41,17 @@ AUTOPost has been developed using the following technologies:
 
 If you want to run AUTOPost in your local environment, follow these steps:
 
-1. Clone this repository: `git clone insert repository path`
-2. Navigate to the project directory: `cd insert directory name`
+1. Clone this repository: `git clone https://github.com/santraez/genpost`
+2. Navigate to the project directory: `cd genpost`
 3. Install the dependencies: `npm install`
-4. Start the application: `npm start`
+4. Start the application: `npm run dev`
 5. Open your browser and visit: `http://localhost:3000`
 
 That's it! Now you can enjoy AUTOPost in your own environment.
 
 ## Contributions
 
-If you wish to contribute to AUTOPost, you're more than welcome! Feel free to submit pull requests or open issues on the GitHub repository: [repository link](insert repository link).
+If you wish to contribute to AUTOPost, you're more than welcome! Feel free to submit pull requests or open issues on the GitHub repository: [repository link](https://github.com/santraez/genpost).
 
 ## Donation
 
@@ -59,4 +59,4 @@ If you wish to contribute to AUTOPost, you're more than welcome! Feel free to su
 
 ## License
 
-This project is licensed under the MIT License. For more information, please refer to the [LICENSE](insert license file path) file.
+This project is licensed under the MIT License. For more information, please refer to the [LICENSE](https://github.com/santraez/genpost/blob/main/LICENSE) file.

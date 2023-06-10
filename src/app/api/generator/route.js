@@ -2,14 +2,13 @@ import { NextResponse } from "next/server"
 import translate from "translate-google-api"
 import { createApi } from "unsplash-js"
 import { Configuration, OpenAIApi } from "openai"
-import response from "./response.json"
 
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_KEY
 })
 
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY_1
 })
 
 const openai = new OpenAIApi(configuration)
@@ -50,21 +49,20 @@ export async function POST(request) {
         randomPhotos.push(element)
       }
     }
-    // const completion = await openai.createCompletion({
-    //   model: "text-davinci-003",
-    //   prompt: generatePrompt(translatedPrompt, lang),
-    //   temperature: 1, // 0 = deterministic, 1 = random
-    //   max_tokens: 2000,
-    //   top_p: 1 // 0 = no randomness, 1 = complete randomness
-    // })
-    // const phrasesArray = JSON.parse(completion.data.choices[0].text)
-    // if (completion.status !== 200 || typeof phrasesArray !== "object" || phrasesArray.length !== 12) {
-    //   return NextResponse.error({
-    //     status: 500,
-    //     message: "An error occurred during your request."
-    //   })
-    // }
-    const phrasesArray = response
+    const completion = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: generatePrompt(translatedPrompt, lang),
+      temperature: 1, // 0 = deterministic, 1 = random
+      max_tokens: 2000,
+      top_p: 1 // 0 = no randomness, 1 = complete randomness
+    })
+    const phrasesArray = JSON.parse(completion.data.choices[0].text)
+    if (completion.status !== 200 || typeof phrasesArray !== "object" || phrasesArray.length !== 12) {
+      return NextResponse.error({
+        status: 500,
+        message: "An error occurred during your request."
+      })
+    }
     const urlsCanvas = new Array(randomPhotos.length).fill("/api/images?").map((path, index) => `${path}url=${randomPhotos[index].slice(34)}&phrase=${phrasesArray[index]}`)
     const urlsColors = new Array(12 - randomPhotos.length).fill("/api/colors?").map((path, index) => `${path}phrase=${phrasesArray[index + randomPhotos.length]}`)
     return NextResponse.json({

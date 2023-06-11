@@ -1,15 +1,74 @@
-.content
+.frontContent,
+.backContent
   width: 100%
   height: 100%
   background-color: var(--c-00)
+  border: 1px solid var(--white)
   border-radius: 40px
+  padding: 10px
   overflow: hidden
+
+.frontContent
+  .image
+    width: 100%
+    height: 400px
+    border-radius: 35px
+    border: 1px solid var(--c-25)
+    margin-bottom: 15px
+    overflow: hidden
+    img
+      width: 100%
+      height: 100%
+  .bar
+    width: 100%
+    height: auto
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    align-items: center
+    padding: 0 35px
+    .icons
+      width: auto
+      height: auto
+      display: flex
+      flex-direction: row
+      justify-content: flex-start
+      align-items: center
+      .heart,
+      .comment
+        font-size: 40px
+      .heart
+        color: var(--red)
+        margin-right: 25px
+      .comment
+        color: var(--blue)
+    .nav
+      width: auto
+      height: auto
+      display: flex
+      flex-direction: row
+      justify-content: flex-end
+      align-items: center
+      .innerOff,
+      .innerOn
+        width: 12px
+        height: 12px
+        border-radius: 50%
+        border: 1px solid var(--c-25)
+        margin-left: 12px
+      .innerOff
+        background-color: var(--c-00)
+      .innerOn
+        background-color: var(--c-50)
+
+.backContent
+  span
   
 .container
-  perspective: 1000px
   width: 100%
   height: 100%
   position: relative
+  perspective: 1000px
   &:hover
     .flipper
       transform: rotateY(180deg)
@@ -17,8 +76,14 @@
     width: 100%
     height: 100%
     position: absolute
+    display: flex
+    flex-direction: column
+    justify-content: flex-start
+    align-items: center
+    border-radius: 40px
+    box-shadow: 0px 0px 120px rgba(78, 170, 255, 0.33)
     transform-style: preserve-3d
-    transition: transform 0.6s
+    transition: transform 2s
     .front,
     .back
       width: 100%

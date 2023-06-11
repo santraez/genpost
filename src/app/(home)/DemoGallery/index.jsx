@@ -5,8 +5,8 @@ import styles from "./styles.module.sass"
 
 const FrontFace = () => {
   return (
-    <div className={styles.content}>
-      <div>
+    <div className={styles.frontContent}>
+      <div className={styles.image}>
         <Image
           src="/default.jpg"
           width={300}
@@ -14,13 +14,13 @@ const FrontFace = () => {
           alt="generated slides"
         />
       </div>
-      <div>
-        <div>
-          <BsFillHeartFill />
-          <FaCommentAlt />
+      <div className={styles.bar}>
+        <div className={styles.icons}>
+          <BsFillHeartFill className={styles.heart} />
+          <FaCommentAlt className={styles.comment} />
         </div>
-        <div>
-          
+        <div className={styles.nav}>
+          {new Array(7).fill(0).map(() => <div className={styles.innerOff} />)}
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@ const FrontFace = () => {
 
 const BackFace = () => {
   return (
-    <div className={styles.content}>
+    <div className={styles.backContent}>
       <span>atras</span>
     </div>
   )

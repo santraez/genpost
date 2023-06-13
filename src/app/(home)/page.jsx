@@ -13,7 +13,9 @@ export default function HomePage() {
       </header>
       <div className={styles.content}>
         <section>
-          <DemoGallery />
+          <div className={styles.inset}>
+            <DemoGallery />
+          </div>
         </section>
         <main>
           <h1>

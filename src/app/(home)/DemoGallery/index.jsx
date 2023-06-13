@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import Image from "next/image"
 import { BsFillHeartFill } from "react-icons/bs"
 import { FaCommentAlt } from "react-icons/fa"
@@ -27,23 +30,96 @@ const FrontFace = () => {
   )
 }
 
-const BackFace = () => {
+const BackFace = ({ isDisabled, setIsDisabled, isActive, setIsActive, isLoading, setIsLoading }) => {
+  const handleFocus = () => {
+    setIsLoading(true)
+  }
+  const handleBlur = () => {
+    setIsLoading(false)
+  }
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setIsDisabled(true)
+    setIsLoading(false)
+    setIsActive(false)
+  }
   return (
     <div className={styles.backContent}>
-      <span>atras</span>
+      <div className={styles.logo}>
+        <object type="image/svg+xml" data="/logoBig.svg" />
+      </div>
+      <form onSubmit={handleSubmit}>
+        <div className={styles.formContent}>
+          <label htmlFor="input">
+            What is your business about?
+          </label>
+          <input
+            id="input"
+            type="text"
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder="Cat Supplies"
+            disabled={isDisabled}
+            required
+          />
+          <div className={styles.validate}>
+            {/* validate box */}
+          </div>
+        </div>
+        <button type="submit">
+          <span>Generate</span>
+        </button>
+      </form>
     </div>
   )
 }
 
 export function DemoGallery() {
+  const [isActive, setIsActive] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(true)
+  const loading = () => {
+    setIsLoading(true)
+    return setTimeout(() => {
+      setIsLoading(false)
+    }, 2000)
+  }
+  const handleFlip = (face) => {
+    if (isLoading) return
+    if (face === "back") {
+      if (isActive) return
+      setTimeout(() => {
+        setIsDisabled(false)
+      }, 2000)
+      setIsActive(true)
+      return loading()
+    }
+    if (face === "front") {
+      if (!isActive) return
+      setIsDisabled(true)
+      setIsActive(false)
+      return loading()
+    }
+  }
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${(isActive) && styles.flipCard}`}
+      onMouseEnter={() => handleFlip("back")}
+      onMouseLeave={() => handleFlip("front")}
+    >
       <div className={styles.flipper}>
         <div className={styles.front}>
           <FrontFace />
         </div>
         <div className={styles.back}>
-          <BackFace />
+          <BackFace
+            isDisabled={isDisabled}
+            setIsDisabled={setIsDisabled}
+            isActive={isActive}
+            setIsActive={setIsActive}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+          />
         </div>
       </div>
     </div>

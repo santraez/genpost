@@ -1,53 +1,107 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import { BsFillHeartFill } from "react-icons/bs"
-import { FaCommentAlt } from "react-icons/fa"
+import { CarouselGallery } from "@/app/(home)/CarouselGallery"
+import langs from "./langs.json"
 import styles from "./styles.module.sass"
 
-const FrontFace = () => {
+const FrontFace = ({ result, loading, isSuccess }) => {
+  const [currentImage, setCurrentImage] = useState(0);
+  const currentStatus = (loading) ? "Loading" : (isSuccess) ? "Success" : "Error"
+  const ref = useRef(null)
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.addEventListener("contextmenu", (e) => e.preventDefault())
+      return () => ref.current.removeEventListener("contextmenu", (e) => e.preventDefault())
+    } else {
+      return () => {}
+    }
+  }, []);
   return (
     <div className={styles.frontContent}>
-      <div className={styles.image}>
+      <div ref={ref} className={styles.image}>
         <Image
-          src="/default.jpg"
-          width={300}
-          height={300}
-          alt="generated slides"
+          className={styles.loading}
+          src="/loading.png"
+          width={100}
+          height={100}
+          alt="loading..."
+          onDragStart={(e) => e.preventDefault()}
+          draggable={false}
         />
+        <div className={styles.carousel}>
+          {(!loading) && (
+            <CarouselGallery
+              result={result}
+              currentImage={currentImage}
+              setCurrentImage={setCurrentImage}
+            />
+          )}
+        </div>
       </div>
       <div className={styles.bar}>
         <div className={styles.icons}>
-          <BsFillHeartFill className={styles.heart} />
-          <FaCommentAlt className={styles.comment} />
+          <span>{currentStatus}</span>
         </div>
         <div className={styles.nav}>
-          {new Array(7).fill(0).map(() => <div className={styles.innerOff} />)}
+          {new Array(7).fill(0).map((_, index) => (
+            <div
+              key={index}
+              className={(loading) ? styles.innerOff : (currentImage === index) ? styles.innerOn : styles.innerOff}
+            />
+          ))}
         </div>
       </div>
     </div>
   )
 }
 
-const BackFace = ({ isDisabled, setIsDisabled, isActive, setIsActive, isLoading, setIsLoading }) => {
+const BackFace = ({ setResult, setLoading, setIsSuccess, isDisabled, setIsDisabled, setIsActive, setIsBlocked, handleFlip }) => {
   const handleFocus = () => {
-    setIsLoading(true)
+    setIsBlocked(true)
   }
   const handleBlur = () => {
-    setIsLoading(false)
+    setIsBlocked(false)
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsDisabled(true)
-    setIsLoading(false)
+    setIsBlocked(false)
     setIsActive(false)
+    const prompt = e.target[0].value
+    const lang = e.target[1].value
+    if (!prompt) return
+    setLoading(true)
+    handleFlip("front")
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ prompt, lang }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      const data = await response.json()
+      if (data && data.status === "success") {
+        setIsSuccess(true)
+        return setResult(data)
+      } else {
+        setIsSuccess(false)
+        throw new Error(data.message)
+      }
+    } catch (error) {
+      console.error(error)
+      setIsSuccess(false)
+    } finally {
+      setLoading(false)
+    }
   }
   return (
     <div className={styles.backContent}>
-      <div className={styles.logo}>
+      {/* <div className={styles.logo}>
         <object type="image/svg+xml" data="/logoBig.svg" />
-      </div>
+      </div> */}
       <form onSubmit={handleSubmit}>
         <div className={styles.formContent}>
           <label htmlFor="input">
@@ -62,6 +116,14 @@ const BackFace = ({ isDisabled, setIsDisabled, isActive, setIsActive, isLoading,
             disabled={isDisabled}
             required
           />
+          <div className={styles.language}>
+            <label htmlFor="input">
+              Select language:
+            </label>
+            <select defaultValue={"English"}>
+              {langs.map((lang, index) => <option key={index} value={lang}>{lang}</option>)}
+            </select>
+          </div>
           <div className={styles.validate}>
             {/* validate box */}
           </div>
@@ -75,30 +137,33 @@ const BackFace = ({ isDisabled, setIsDisabled, isActive, setIsActive, isLoading,
 }
 
 export function DemoGallery() {
+  const [result, setResult] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
   const [isActive, setIsActive] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isBlocked, setIsBlocked] = useState(false)
   const [isDisabled, setIsDisabled] = useState(true)
-  const loading = () => {
-    setIsLoading(true)
+  const blocking = () => {
+    setIsBlocked(true)
     return setTimeout(() => {
-      setIsLoading(false)
-    }, 2000)
+      setIsBlocked(false)
+    }, 1000)
   }
   const handleFlip = (face) => {
-    if (isLoading) return
+    if (isBlocked) return
     if (face === "back") {
       if (isActive) return
       setTimeout(() => {
         setIsDisabled(false)
-      }, 2000)
+      }, 1000)
       setIsActive(true)
-      return loading()
+      return blocking()
     }
     if (face === "front") {
       if (!isActive) return
       setIsDisabled(true)
       setIsActive(false)
-      return loading()
+      return blocking()
     }
   }
   return (
@@ -109,16 +174,24 @@ export function DemoGallery() {
     >
       <div className={styles.flipper}>
         <div className={styles.front}>
-          <FrontFace />
+          <FrontFace
+            result={result}
+            loading={loading}
+            isSuccess={isSuccess}
+          />
         </div>
         <div className={styles.back}>
           <BackFace
+            setResult={setResult}
+            setLoading={setLoading}
+            setIsSuccess={setIsSuccess}
             isDisabled={isDisabled}
             setIsDisabled={setIsDisabled}
             isActive={isActive}
             setIsActive={setIsActive}
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
+            isBlocked={isBlocked}
+            setIsBlocked={setIsBlocked}
+            handleFlip={handleFlip}
           />
         </div>
       </div>

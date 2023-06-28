@@ -23,7 +23,7 @@ const FrontFace = ({ result, loading, isSuccess }) => {
       <div ref={ref} className={styles.image}>
         <Image
           className={styles.loading}
-          src="/loading.png"
+          src="/assets/loading.png"
           width={100}
           height={100}
           alt="loading..."
@@ -58,6 +58,7 @@ const FrontFace = ({ result, loading, isSuccess }) => {
 }
 
 const BackFace = ({ setResult, setLoading, setIsSuccess, isDisabled, setIsDisabled, setIsActive, setIsBlocked, handleFlip }) => {
+  const origin = (typeof window !== "undefined") && window.location.origin
   const handleFocus = () => {
     setIsBlocked(true)
   }
@@ -77,7 +78,7 @@ const BackFace = ({ setResult, setLoading, setIsSuccess, isDisabled, setIsDisabl
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
         method: "POST",
-        body: JSON.stringify({ prompt, lang }),
+        body: JSON.stringify({ prompt, lang, origin }),
         headers: {
           "Content-Type": "application/json"
         }
@@ -139,7 +140,7 @@ const BackFace = ({ setResult, setLoading, setIsSuccess, isDisabled, setIsDisabl
 export function DemoGallery() {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(true)
   const [isActive, setIsActive] = useState(false)
   const [isBlocked, setIsBlocked] = useState(false)
   const [isDisabled, setIsDisabled] = useState(true)

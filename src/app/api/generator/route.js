@@ -21,7 +21,7 @@ export async function POST(request) {
     })
   }
   try {
-    const { prompt, lang } = await request.json()
+    const { prompt, lang, origin } = await request.json()
     if (prompt.trim().length < 3) {
       return NextResponse.error({
         status: 400,
@@ -63,11 +63,21 @@ export async function POST(request) {
         message: "An error occurred during your request."
       })
     }
-    const urlsCanvas = new Array(randomPhotos.length).fill("/api/images?").map((path, index) => `${path}url=${randomPhotos[index].slice(34)}&phrase=${phrasesArray[index]}`)
-    const urlsColors = new Array(7 - randomPhotos.length).fill("/api/colors?").map((path, index) => `${path}phrase=${phrasesArray[index + randomPhotos.length]}`)
+    const randomTmps = []
+    while (randomTmps.length < 7) {
+      const tmp = Math.floor(Math.random() * 14) + 1
+      if (!randomTmps.includes(tmp)) {
+        randomTmps.push(tmp)
+      }
+    }
+    console.log("🚀 ~ file: route.js:67 ~ POST ~ randomTmps:", randomTmps)
+    const urlsCanvas = new Array(randomPhotos.length).fill("/api/images?").map((path, index) => `${path}url=${randomPhotos[index].slice(34)}&phs=${phrasesArray[index]}&org=${origin}`)
+    const urlsColors = new Array(7 - randomPhotos.length).fill("/api/colors?").map((path, index) => `${path}phs=${phrasesArray[index + randomPhotos.length]}&org=${origin}`)
+    const preUrls = (urlsCanvas.length < 7) ? urlsCanvas.concat(urlsColors) : urlsCanvas
+    const finalUrls = preUrls.map((path, index) => `${path}&tmp=${randomTmps[index]}`)
     return NextResponse.json({
       status: "success",
-      urls: (urlsCanvas.length < 7) ? urlsCanvas.concat(urlsColors) : urlsCanvas
+      urls: finalUrls
     })
   } catch (error) {
     if (error.response) {
@@ -91,13 +101,13 @@ function generatePrompt (prompt, lang) {
     P: I want 7 phrases translated into Spanish language that are creative, original and useful tips, curiosities or ideas related to the study, profession, work or business of Programming. These phrases should be brief, concise, funny, positive, sarcastic and entertaining. The length of the phrases should not exceed 70 characters. It is important that your response is within [] and that the 7 phrases are translated into the Spanish language.
     R:
       [
-        "El código bien escrito es como un unicornio, todos hablan de él pero nadie lo ha visto realmente.",
-        "Un buen programador es alguien que odia tanto los errores como los lunes.",
-        "El mejor consejo que puedo darte es que siempre hagas una copia de seguridad.",
-        "La programación es como un lenguaje extraterrestre, pero con menos gramática.",
-        "El código no miente, pero a veces esconde la verdad.",
-        "La mejor forma de encontrar un error es enviar el código a producción.",
-        "No te preocupes por el código feo, siempre puedes justificarlo como 'carácter personal'."
+        "El código bien escrito es como un unicornio, todos hablan de él pero nadie lo ha visto realmente",
+        "Un buen programador es alguien que odia tanto los errores como los lunes",
+        "El mejor consejo que puedo darte es que siempre hagas una copia de seguridad",
+        "La programación es como un lenguaje extraterrestre, pero con menos gramática",
+        "El código no miente, pero a veces esconde la verdad",
+        "La mejor forma de encontrar un error es enviar el código a producción",
+        "No te preocupes por el código feo, siempre puedes justificarlo como 'carácter personal'"
       ]
     P: I want 7 phrases translated into ${lang} language that are creative, original and useful tips, curiosities or ideas related to the study, profession, work or business of ${prompt}. These phrases should be brief, concise, funny, positive, sarcastic and entertaining. The length of the phrases should not exceed 70 characters. It is important that your response is within [] and that the 7 phrases are translated into the ${lang} language.
     R:

@@ -1,0 +1,56 @@
+{
+  "t1": {
+    "width": 200,
+    "height": 150,
+    "variance": 95,
+    "rotate": -3,
+    "color": "#1f2d39",
+    "top": 75,
+    "left": 51
+  },
+  "t2": {
+    "width": 150,
+    "height": 110,
+    "variance": 95,
+    "rotate": 0,
+    "color": "#1f2d39",
+    "top": 107,
+    "left": 80
+  },
+  "t3": {
+    "width": 230,
+    "height": 190,
+    "variance": 95,
+    "rotate": 0,
+    "color": "#000000",
+    "top": 65,
+    "left": 35
+  },
+  "t4": {
+    "width": 180,
+    "height": 185,
+    "variance": 95,
+    "rotate": -3,
+    "color": "#ffffff",
+    "top": 60,
+    "left": 70
+  },
+  "t5": {
+    "width": 135,
+    "height": 90,
+    "variance": 95,
+    "rotate": -7,
+    "color": "#005060",
+    "top": 97,
+    "left": 90
+  },
+  "t6": {
+    "width": 135,
+    "height": 90,
+    "variance": 95,
+    "rotate": -7,
+    "color": "#005060",
+    "top": 97,
+    "left": 90
+  }
+}

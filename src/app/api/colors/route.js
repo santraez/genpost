@@ -1,48 +1,66 @@
 import { ImageResponse } from "next/server"
+import templates from "./templates.json"
 
 export async function GET(request) {
-  const phrase = request.nextUrl.searchParams.get("phrase")
+  const phrase = request.nextUrl.searchParams.get("phs")
+  const origin = request.nextUrl.searchParams.get("org")
+  // const tmp = request.nextUrl.searchParams.get("tmp")
+  const tmp = "6"
+  const length = phrase.length
+  const { width, height, variance, rotate, color, top, left } = templates[`t${tmp}`]
+  const fontSize = Math.sqrt((width * height * variance) / (length * 100))
   return new ImageResponse(
     (
       <div
         style={{
           width: "300px",
           height: "300px",
+          boxSizing: "border-box",
           position: "relative",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundImage: "linear-gradient(to right, #f44336, #2196f3)"
         }}
       >
+        <img
+          src={`${origin}/assets/color-temp-${tmp}.png`}
+          style={{
+            width: "300px",
+            height: "300px",
+            position: "absolute",
+            top: "0px",
+            left: "0px",
+            zIndex: "0",
+          }}
+        />
         <div
           style={{
-            width: "250px",
-            height: "250px",
+            width: `${width}px`,
+            height: `${height}px`,
             position: "absolute",
+            top: `${top}px`,
+            left: `${left}px`,
+            boxSizing: "border-box",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            top: "25px",
-            left: "25px",
-            borderRadius: "20px",
-            background: "#2196f3",
-            background: "-webkit-linear-gradient(to left, #f44336, #2196f3)",
-            background: "linear-gradient(to left, #f44336, #2196f3)",
-            opacity: "0.7"
+            transform: `rotate(${rotate}deg)`,
+            overflow: "hidden",
+            zIndex: "3"
           }}
         >
           <p
             style={{
               width: "100%",
-              height: "auto",
-              color: "white",
-              fontSize: "25px",
+              maxHeight: "100%",
+              fontSize: `${fontSize}px`,
               fontWeight: "700",
-              textAlign: "center",
+              lineHeight: `${fontSize + 5}px`,
+              color: color,
               margin: "0px",
-              padding: "0 20px",
-              boxSizing: "border-box"
+              padding: "0px",
+              textAlign: "center",
+              wordWrap: "break-word"
             }}
           >
             {phrase}
@@ -51,9 +69,15 @@ export async function GET(request) {
       </div>
     ),
     {
+      debug: true,
       width: 300,
       height: 300,
-      debug: false
+      // fonts: {
+      //   name: string,
+      //   data: ArrayBuffer,
+      //   weight: number,
+      //   style: 'normal' | 'italic'
+      // }
     }
   )
 }

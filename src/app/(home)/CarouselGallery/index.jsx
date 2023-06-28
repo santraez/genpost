@@ -24,9 +24,20 @@ const variants = {
     };
   }
 };
+
+const defaultImages = [
+  "/default/1.png",
+  "/default/2.png",
+  "/default/3.png",
+  "/default/4.png",
+  "/default/5.png",
+  "/default/6.png",
+  "/default/7.png"
+];
+
 export function CarouselGallery({ result, currentImage, setCurrentImage }) {
   const [[page, direction], setPage] = useState([0, 0]);
-  const images = result?.urls || [];
+  const images = (result !== null) ? result?.urls : defaultImages;
   const imagesNumber = images.length || 7;
   const paginate = (newDirection) => {
     setPage([page + newDirection, newDirection]);
@@ -35,7 +46,7 @@ export function CarouselGallery({ result, currentImage, setCurrentImage }) {
     const interval = setInterval(() => {
       setCurrentImage((prevImage) => (prevImage === imagesNumber - 1 ? 0 : prevImage + 1));
       paginate(1);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [page]);
   return (

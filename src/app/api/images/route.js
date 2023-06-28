@@ -3,6 +3,7 @@ import { ImageResponse } from "next/server"
 export async function GET(request) {
   const url = request.nextUrl.searchParams.get("url")
   const phrase = request.nextUrl.searchParams.get("phrase")
+  const origin = request.nextUrl.searchParams.get("origin")
   return new ImageResponse(
     (
       <div

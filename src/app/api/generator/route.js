@@ -11,7 +11,7 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY_1
 })
 
-const openai = new OpenAIApi(configuration)
+const openai = new OpenAIApi(configuration);
 
 export async function POST(request) {
   if (!configuration.apiKey) {
@@ -20,6 +20,7 @@ export async function POST(request) {
       message: "OpenAI API key not configured"
     })
   }
+
   try {
     const { prompt, lang, origin } = await request.json()
     if (prompt.trim().length < 3) {
@@ -70,7 +71,6 @@ export async function POST(request) {
         randomTmps.push(tmp)
       }
     }
-    console.log("🚀 ~ file: route.js:67 ~ POST ~ randomTmps:", randomTmps)
     const urlsCanvas = new Array(randomPhotos.length).fill("/api/images?").map((path, index) => `${path}url=${randomPhotos[index].slice(34)}&phs=${phrasesArray[index]}&org=${origin}`)
     const urlsColors = new Array(7 - randomPhotos.length).fill("/api/colors?").map((path, index) => `${path}phs=${phrasesArray[index + randomPhotos.length]}&org=${origin}`)
     const preUrls = (urlsCanvas.length < 7) ? urlsCanvas.concat(urlsColors) : urlsCanvas
@@ -109,31 +109,21 @@ function generatePrompt (prompt, lang) {
         "La mejor forma de encontrar un error es enviar el código a producción",
         "No te preocupes por el código feo, siempre puedes justificarlo como 'carácter personal'"
       ]
+    P: I want 7 phrases translated into English language that are creative, original and useful tips, curiosities or ideas related to the study, profession, work or business of Medicine. These phrases should be brief, concise, funny, positive, sarcastic and entertaining. The length of the phrases should not exceed 70 characters. It is important that your response is within [] and that the 7 phrases are translated into the English language.
+    R:
+      [
+        "Inject laughter into your day: humor is the best medicine!",
+        "Don't be afraid to prescribe self-care: it's a healthy dose for success",
+        "Be a doctor, not a magician: miracles take time, medicine takes science",
+        "In medicine, 'oops' is just 'research in progress'",
+        "Patients may forget what you said, but they'll always remember how you made them feel",
+        "Remember, teamwork in medicine is like a symphony: each instrument plays a vital role",
+        "Medicine: where 'caffeine' and 'charting' become interchangeable terms"
+      ]
     P: I want 7 phrases translated into ${lang} language that are creative, original and useful tips, curiosities or ideas related to the study, profession, work or business of ${prompt}. These phrases should be brief, concise, funny, positive, sarcastic and entertaining. The length of the phrases should not exceed 70 characters. It is important that your response is within [] and that the 7 phrases are translated into the ${lang} language.
     R:
-    
+      
   `)
-  // return (`
-  //   P: I want 12 phrases translated into Spanish language that are creative, original and useful tips, curiosities or ideas related to the study, profession, work or business of Programming. These phrases should be brief, concise, funny, positive, sarcastic and entertaining. The length of the phrases should not exceed 70 characters. It is important that your response is within [] and that the 12 phrases are translated into the Spanish language.
-  //   R:
-  //     [
-  //       "Programar es como hacer magia, pero sin saber cómo funciona el sombrero.",
-  //       "Un buen programador es alguien que odia tanto los errores como los lunes.",
-  //       "El mejor consejo que puedo darte es que siempre hagas una copia de seguridad.",
-  //       "La programación es como un lenguaje extraterrestre, pero con menos gramática.",
-  //       "El código no miente, pero a veces esconde la verdad.",
-  //       "La mejor forma de encontrar un error es enviar el código a producción.",
-  //       "No te preocupes por el código feo, siempre puedes justificarlo como 'carácter personal'.",
-  //       "El código bien escrito es como un unicornio, todos hablan de él pero nadie lo ha visto realmente.",
-  //       "Programar es como construir un castillo de arena, nunca sabes cuándo llegará la próxima ola.",
-  //       "Un buen programador es aquel que puede hacer que la tecnología funcione para los demás.",
-  //       "La programación es como jugar al Tetris; siempre hay una mejor solución.",
-  //       "La rutina siempre hace que un programador se vuelva obsoleto. ¡Asegúrate de mantenerte actualizado!"
-  //     ]
-  //   P: I want 12 phrases translated into ${lang} language that are creative, original and useful tips, curiosities or ideas related to the study, profession, work or business of ${prompt}. These phrases should be brief, concise, funny, positive, sarcastic and entertaining. The length of the phrases should not exceed 70 characters. It is important that your response is within [] and that the 12 phrases are translated into the ${lang} language.
-  //   R:
-    
-  // `)
 }
 
 async function searchPhotos (keywords) {

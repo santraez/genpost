@@ -4,11 +4,11 @@ import templates from "./templates.json"
 export async function GET(request) {
   const phrase = request.nextUrl.searchParams.get("phs")
   const origin = request.nextUrl.searchParams.get("org")
-  // const tmp = request.nextUrl.searchParams.get("tmp")
-  const tmp = "6"
+  const tmp = request.nextUrl.searchParams.get("tmp")
+  const { width, height, rotate, color, top, left } = templates[`t${tmp}`]
+  const variance = ((width / height) >= 1) ? 1 : (width / height)
   const length = phrase.length
-  const { width, height, variance, rotate, color, top, left } = templates[`t${tmp}`]
-  const fontSize = Math.sqrt((width * height * variance) / (length * 100))
+  const fontSize = Math.sqrt((width * height * variance) / length)
   return new ImageResponse(
     (
       <div
@@ -55,7 +55,7 @@ export async function GET(request) {
               maxHeight: "100%",
               fontSize: `${fontSize}px`,
               fontWeight: "700",
-              lineHeight: `${fontSize + 5}px`,
+              lineHeight: `${fontSize + 3}px`,
               color: color,
               margin: "0px",
               padding: "0px",
@@ -69,7 +69,7 @@ export async function GET(request) {
       </div>
     ),
     {
-      debug: true,
+      debug: false,
       width: 300,
       height: 300,
       // fonts: {
